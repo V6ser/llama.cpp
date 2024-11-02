@@ -22,6 +22,10 @@
 #include "llama.h"
 #include "common.h"
 
+#ifdef GGML_USE_QNN
+#include "ggml-qnn.h"
+#endif
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #ifndef NOMINMAX
@@ -778,6 +782,7 @@ struct test {
     static const bool sycl;
     static const bool gpu_blas;
     static const bool blas;
+    static const bool qnn;
     static const std::string cpu_info;
     static const std::string gpu_info;
     std::string model_filename;
@@ -878,7 +883,7 @@ struct test {
     static const std::vector<std::string> & get_fields() {
         static const std::vector<std::string> fields = {
             "build_commit", "build_number",
-            "cuda", "vulkan", "kompute", "metal", "sycl", "rpc", "gpu_blas", "blas",
+            "cuda", "vulkan", "kompute", "metal", "sycl", "rpc", "gpu_blas", "blas", "qnn",
             "cpu_info", "gpu_info",
             "model_filename", "model_type", "model_size", "model_n_params",
             "n_batch", "n_ubatch",
@@ -907,7 +912,7 @@ struct test {
         }
         if (field == "cuda" || field == "vulkan" || field == "kompute" || field == "metal" ||
             field == "gpu_blas" || field == "blas" || field == "sycl" ||field == "f16_kv" || field == "no_kv_offload" ||
-            field == "cpu_strict" ||
+            field == "qnn" || field == "cpu_strict" ||
             field == "flash_attn" || field == "use_mmap" || field == "embeddings") {
             return BOOL;
         }
@@ -936,7 +941,7 @@ struct test {
         std::vector<std::string> values = {
             build_commit, std::to_string(build_number),
             std::to_string(cuda), std::to_string(vulkan), std::to_string(vulkan),
-            std::to_string(metal), std::to_string(sycl), std::to_string(has_rpc), std::to_string(gpu_blas), std::to_string(blas),
+            std::to_string(metal), std::to_string(sycl), std::to_string(qnn), std::to_string(has_rpc), std::to_string(gpu_blas), std::to_string(blas),
             cpu_info, gpu_info,
             model_filename, model_type, std::to_string(model_size), std::to_string(model_n_params),
             std::to_string(n_batch), std::to_string(n_ubatch),
@@ -971,6 +976,7 @@ const bool        test::metal        = !!ggml_cpu_has_metal();
 const bool        test::gpu_blas     = !!ggml_cpu_has_gpublas();
 const bool        test::blas         = !!ggml_cpu_has_blas();
 const bool        test::sycl         = !!ggml_cpu_has_sycl();
+const bool        test::qnn          = !!ggml_cpu_has_qnn();
 const std::string test::cpu_info     = get_cpu_info();
 const std::string test::gpu_info     = get_gpu_info();
 

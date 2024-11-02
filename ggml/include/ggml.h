@@ -2412,6 +2412,7 @@ extern "C" {
     GGML_API int ggml_cpu_has_vsx        (void);
     GGML_API int ggml_cpu_has_cann       (void);
     GGML_API int ggml_cpu_has_llamafile  (void);
+    GGML_API int ggml_cpu_has_qnn        (void);
 
 #ifdef  __cplusplus
 // restrict not standard in C++
